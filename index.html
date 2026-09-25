@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Building Blocks</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"><style id="app-css">
+:root{
+  --shell:#DCE2DF; --panel:#F3F5F3; --sunk:#E6EAE7; --line:#C3CCC7; --line-2:#AEB9B3;
+  --text:#1A2128; --muted:#5C6A72;
+  --paper:#FBFAF7; --ink:#12161C;
+  --brass:#C08F14; --brass-fill:#F6E2A8; --brass-soft:#FDF3D6;
+  --hl-word:rgba(224,176,40,.26); --hl-sel:rgba(224,176,40,.62);
+  --sage:#4F8570; --red:#B2503F;
+  --radius:5px;
+  --cell:34px; --cols:15; --rows:15;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --shell:#1B2129; --panel:#252D37; --sunk:#1F262E; --line:#39434F; --line-2:#4A5666;
+    --text:#E6EAEC; --muted:#94A1AC;
+    --brass:#D9A521; --brass-fill:#E9CE7A; --brass-soft:#F6EBC6;
+    --hl-word:rgba(224,176,40,.26); --hl-sel:rgba(224,176,40,.62);
+    --sage:#71A08E; --red:#D2705D;
+  }
+}
+:root[data-theme="dark"]{
+  --shell:#1B2129; --panel:#252D37; --sunk:#1F262E; --line:#39434F; --line-2:#4A5666;
+  --text:#E6EAEC; --muted:#94A1AC;
+  --brass:#D9A521; --brass-fill:#E9CE7A; --brass-soft:#F6EBC6;
+  --hl-word:rgba(224,176,40,.26); --hl-sel:rgba(224,176,40,.62);
+  --sage:#71A08E; --red:#D2705D;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;background:var(--shell);color:var(--text);
+  font-family:Archivo,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.5;
+  -webkit-text-size-adjust:100%;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- chrome ---------- */
+.bar{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:10px 18px;border-bottom:1px solid var(--line);background:var(--panel);
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:40;
+}
+.brand{display:flex;align-items:center;gap:9px;margin-right:auto}
+.brand h1{
+  font-family:Fraunces,Georgia,serif;font-weight:700;font-size:20px;margin:0;letter-spacing:-.01em;
+}
+.mark{width:19px;height:19px;border:2px solid var(--text);border-radius:2px;position:relative;flex:none}
+.mark::after{content:"";position:absolute;inset:3px 3px auto auto;width:7px;height:7px;border-radius:50%;background:var(--brass)}
+.seg{display:flex;background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);padding:2px;gap:2px}
+.seg button{
+  border:0;background:transparent;padding:5px 13px;border-radius:3px;font-weight:500;color:var(--muted);
+}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.acts{display:flex;gap:7px;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--line-2);background:var(--panel);padding:6px 12px;border-radius:var(--radius);
+  font-weight:500;
+}
+.btn:hover{border-color:var(--text)}
+.btn.primary{background:var(--brass);border-color:var(--brass);color:#1B1403}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.quiet:hover{color:var(--text)}
+.btn.danger{color:var(--red);border-color:transparent;background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+main{display:flex;gap:22px;align-items:flex-start;padding:18px;max-width:1220px;margin:0 auto}
+.stage{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:center;gap:12px}
+.panel-col{flex:0 0 340px;max-width:340px;min-width:0}
+@media (max-width:900px){
+  main{flex-direction:column;padding:12px;gap:14px}
+  .panel-col{flex:none;width:100%;max-width:none}
+}
+
+/* ---------- toolbars ---------- */
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;width:100%}
+.tools label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.num-in{width:52px;padding:4px 6px;border:1px solid var(--line-2);border-radius:4px;background:var(--panel)}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+
+/* ---------- grid ---------- */
+.gridwrap{
+  position:relative;
+  width:calc(var(--cols) * var(--cell));
+  height:calc(var(--rows) * var(--cell));
+  max-width:100%;
+  border:2px solid var(--ink);border-radius:2px;background:var(--paper);
+  box-shadow:0 6px 22px rgba(0,0,0,.18);
+  touch-action:manipulation;overflow:hidden;
+}
+.gridwrap.no-lines{border-color:transparent}
+.gridwrap.no-lines .cell{border-color:transparent}
+.grid{
+  position:relative;z-index:2;
+  display:grid;width:calc(100% + 1px);height:calc(100% + 1px);
+  grid-template-columns:repeat(var(--cols),1fr);
+  grid-template-rows:repeat(var(--rows),1fr);
+  gap:0;background:transparent;
+}
+.cell{
+  position:relative;background:transparent;overflow:hidden;
+  border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:600;color:var(--ink);user-select:none;
+  font-size:calc(var(--cell) * .58);line-height:1;
+}
+.cell.blk{background:transparent}
+.cell .num{
+  position:absolute;top:1px;left:2px;font-size:calc(var(--cell) * .27);
+  font-weight:600;color:#5A6068;line-height:1;pointer-events:none;
+}
+.cell .ltr{position:relative;z-index:2;transform:translateY(calc(var(--cell) * .05))}
+.cell.word{background:var(--hl-word)}
+.cell.sel{background:var(--hl-sel);box-shadow:inset 0 0 0 2px var(--brass)}
+.cell.blk.sel{box-shadow:inset 0 0 0 2px var(--brass)}
+.cell.wrong .ltr{color:var(--red)}
+.cell.wrong::after{
+  content:"";position:absolute;inset:auto 0 0 0;height:0;
+  border-top:calc(var(--cell)*.06) solid var(--red);transform:rotate(-38deg);transform-origin:center;
+  top:50%;z-index:3;opacity:.75;
+}
+.cell.given .ltr{color:var(--sage)}
+.cell.pencil .ltr{opacity:.45}
+
+/* ---------- pins ---------- */
+/* block layer: paints black squares, sits beneath the art so images can cover them */
+.blocklayer{
+  position:absolute;inset:0;z-index:0;
+  display:grid;grid-template-columns:repeat(var(--cols),1fr);grid-template-rows:repeat(var(--rows),1fr);
+}
+.blocklayer .b{background:transparent}
+.blocklayer .b.blk{background:var(--ink)}
+
+/* art layer: sits on the paper (or on black squares), under the letters and grid lines */
+.pins{position:absolute;inset:0;pointer-events:none;z-index:1}
+.pin{position:absolute}
+.pin img{width:100%;height:100%;display:block}
+
+/* editing handles: a separate layer above everything */
+.handles{position:absolute;inset:0;z-index:8;pointer-events:none}
+.handle{
+  position:absolute;pointer-events:auto;
+  border:1.5px dashed rgba(192,143,20,.85);
+  background:rgba(224,176,40,.07);cursor:grab;touch-action:none;
+}
+.handle.active{border-style:solid;border-color:var(--brass);background:rgba(224,176,40,.16)}
+.handle.dragging{cursor:grabbing}
+.handle .grip{
+  position:absolute;right:1px;bottom:1px;width:15px;height:15px;border-radius:3px;
+  background:var(--brass);border:2px solid var(--paper);cursor:nwse-resize;touch-action:none;
+  box-shadow:0 1px 3px rgba(0,0,0,.4);
+}
+
+#kbd{position:fixed;bottom:0;left:0;width:1px;height:1px;opacity:0;border:0;padding:0;
+  pointer-events:none;background:transparent;z-index:-1}
+
+/* ---------- clue bar ---------- */
+.cluebar{
+  display:flex;align-items:center;gap:10px;width:100%;max-width:calc(var(--cols) * var(--cell));
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:9px 10px;
+  min-height:46px;
+}
+.cluebar .tag{
+  font-family:Fraunces,Georgia,serif;font-weight:700;font-size:14px;color:var(--brass);flex:none;
+}
+.cluebar .txt{flex:1;min-width:0;font-size:14px}
+.cluebar .arrows{display:flex;gap:4px;flex:none}
+.cluebar .arrows button{width:30px;height:30px;padding:0;border-radius:4px;border:1px solid var(--line-2);background:var(--sunk)}
+
+/* ---------- panel ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.panel + .panel{margin-top:14px}
+.panel > h2{
+  font-family:Fraunces,Georgia,serif;font-size:15px;font-weight:700;margin:0;
+  padding:10px 14px;border-bottom:1px solid var(--line);background:var(--sunk);
+}
+.panel .body{padding:12px 14px}
+.panel .body.tight{padding:6px 0}
+
+.field{display:block;margin-bottom:10px}
+.field span{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
+.field input,.field textarea,.field select{
+  width:100%;padding:6px 8px;border:1px solid var(--line-2);border-radius:4px;background:var(--sunk);
+}
+.row{display:flex;gap:10px}
+.row > *{flex:1;min-width:0}
+
+.clues{list-style:none;margin:0;padding:0;max-height:min(46vh,420px);overflow-y:auto}
+.clues li{display:flex;gap:9px;padding:6px 14px;border-bottom:1px solid var(--line);align-items:flex-start}
+.clues li:last-child{border-bottom:0}
+.clues li.on{background:var(--brass-soft);color:var(--ink)}
+.clues .n{flex:none;width:26px;text-align:right;font-weight:700;font-size:13px;padding-top:4px;color:var(--muted)}
+.clues li.on .n{color:var(--brass)}
+.clues .c{flex:1;min-width:0}
+.clues .ans{font-size:11px;letter-spacing:.14em;color:var(--muted);margin-top:2px;word-break:break-all}
+.clues button.c{text-align:left;background:none;border:0;padding:4px 0;font-size:14px}
+.clues input.c{padding:4px 7px;border:1px solid transparent;border-radius:4px;background:var(--sunk)}
+.clues input.c:hover{border-color:var(--line-2)}
+
+.pinlist{list-style:none;margin:0;padding:0}
+.pinlist li{display:flex;gap:9px;align-items:center;padding:7px 14px;border-bottom:1px solid var(--line)}
+.pinlist li.on{background:var(--brass-soft);color:var(--ink)}
+.pinlist img{width:38px;height:38px;object-fit:cover;border-radius:3px;border:1px solid var(--line-2);flex:none}
+.pinlist .meta{flex:1;min-width:0;font-size:12px;color:var(--muted)}
+.slider{width:100%}
+.hint{font-size:12.5px;color:var(--muted);margin:0 0 10px}
+.hint:last-child{margin-bottom:0}
+.empty{padding:18px 14px;text-align:center;color:var(--muted);font-size:13px}
+
+.stat{display:flex;gap:14px;font-size:13px;color:var(--muted);flex-wrap:wrap;justify-content:center}
+.stat b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ---------- modal + toast ---------- */
+.scrim{position:fixed;inset:0;background:rgba(9,12,16,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:80}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:9px;max-width:460px;width:100%;max-height:82vh;overflow:auto;box-shadow:0 18px 50px rgba(0,0,0,.4)}
+.modal h3{font-family:Fraunces,Georgia,serif;margin:0;padding:14px 18px;border-bottom:1px solid var(--line);font-size:17px}
+.modal .mbody{padding:16px 18px}
+.modal .mfoot{display:flex;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--line)}
+.plist{list-style:none;margin:0;padding:0}
+.plist li{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.plist .t{flex:1;min-width:0}
+.plist .t b{display:block;font-weight:600}
+.plist .t small{color:var(--muted)}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  background:var(--ink);color:#F4F6F5;padding:10px 16px;border-radius:99px;z-index:90;font-size:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:90vw;
+}
+.banner{
+  width:100%;max-width:calc(var(--cols) * var(--cell));
+  background:var(--sage);color:#06140F;padding:10px 14px;border-radius:var(--radius);
+  font-weight:600;text-align:center;
+}
+:root[data-theme="dark"] .banner,
+:root:not([data-theme="light"]) .banner{color:#06140F}
+
+body.embedded .build-only{display:none!important}
+body.embedded .seg{display:none}
+.solo-title{font-family:Fraunces,Georgia,serif;font-size:19px;font-weight:700;margin:0;text-align:center}
+.solo-by{font-size:13px;color:var(--muted);text-align:center;margin:2px 0 0}
+</style></head><body class="embedded"><div id="app">
+  <header class="bar">
+    <div class="brand"><span class="mark"></span><h1>Gridpin</h1></div>
+    <div class="seg build-only" id="modes">
+      <button data-mode="build" aria-pressed="true">Build</button>
+      <button data-mode="play" aria-pressed="false">Play</button>
+    </div>
+    <div class="acts" id="acts"></div>
+  </header>
+  <main>
+    <section class="stage">
+      <div id="stage-head" class="tools"></div>
+      <div class="gridwrap" id="gridwrap">
+        <div class="blocklayer" id="blocklayer"></div>
+        <div class="pins" id="pins"></div>
+        <div class="grid" id="grid"></div>
+        <div class="handles" id="handles"></div>
+      </div>
+      <div id="stage-foot"></div>
+    </section>
+    <div class="panel-col" id="panel-col"></div>
+  </main>
+  <input id="kbd" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" aria-label="Grid entry">
+</div><div id="overlay"></div><script>window.__EMBED__={"puzzle":{"title":"Building Blocks","author":"Sunny Maharjan","rows":11,"cols":11,"blocks":"...#......#...#......##..........#...#####..###...........................###..#####...#..........##......#...#......#...","fill":"ABC NUTMEG CEO ARIANA  EDIBLEGOLD FAN     PI   SAVANNASCOUPLEGOALSOBSOLETE   RE     NBA KYLEGORDON  EEYORE BTS DIETED ASH","clues":{"1A":"\"Abbot Elementary\" network, fittingly","1D":"Summer necessity","2D":"2023 Netflix show about two strangers who engage in a petty feud","3D":"Musical ending","4A":"Soccer trick named after a spice","4D":"Snatch","5D":"WWW address","6D":"\"How to ___ a ___?\" (most common Google search)","7D":"The New Yorker, e.g.","8D":"Musician Brian","9D":"Rhyming name for a female friend","10A":"Corporate VIP","11A":"\"Wicked\" star Grande","12A":"Extravagant topping for a cake","13D":"What you might use Pinterest for, slangily","14D":"Insult","15A":"Cool","16A":"Numerical constant celebrated on March 14","17A":"Habitats for cheetahs and giraffes","18D":"\"The Winner Takes It ___\" (ABBA hit)","19D":"Geese formation","20D":"FBI employee","21D":"Without stopping","22D":"Syllable repeated 16 times in the Batman theme song","23A":"Hashtag on a Valentine's Day post, maybe","23D":"It's popped on New Year's Eve","24D":"Followed","25D":"2019 Jordan Peele film about clones taking over America, or an abbreviation for America","26A":"Outlived its usefulness","27A":"Do follower?","28A":"Org. with Bulls and Hawks","29D":"Tapioca pearls","30D":"Picnic pests","31A":"\"Planet of the Bass\" and \"Mr. Jambo\" singer","32D":"Hawaiian garland","33D":"\"An ___ for an ___ makes the whole world blind\"","34D":"Understood","35D":"You mine it in Minecraft","36D":"Crimson","37A":"Depressed donkey of children's literature","38A":"\"Dynamite\" K-Pop group","39D":"\"Be quiet!\"","40A":"Followed a WeightWatchers program, maybe","41A":"Fireplace remnant"},"pins":[{"r":7,"c":2,"w":4,"h":2,"op":0.85,"rot":0,"fit":"contain","assetId":"d594fe8486fb6e7355acca8178877030"},{"r":4,"c":4,"w":4,"h":2,"op":0.85,"rot":0,"fit":"contain","assetId":"c83e8aa4a367e01c3a068e659a832fb7"},{"r":1,"c":5,"w":4,"h":2,"op":0.8,"rot":0,"fit":"contain","assetId":"5fb3da04b014ebdab7467d55eeed9f05"}],"updatedAt":"2026-09-25T16:39:18.811Z"},"images":{"d594fe8486fb6e7355acca8178877030":"data:image/webp;base64,UklGRkwFAABXRUJQVlA4WAoAAAAwAAAAjwEAxwAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZBTFBIRAAAAAEPMP8REZIEJCkqIyIaAEX6/58i+p8KItlKvhODqFQjCkFcIlhE/ycAKBB//k5EpKzFtndLbtuwpLbnpe39Wa19/x8CVlA4IBIDAADwJQCdASqQAcgAPlEmkkYjoiGhJD4YIHAKCWdu4XXuABm8I7/c/yj2xnp34fflFyTfcD9jssD4V/t35Z/5L3n/w/8h/kB5gH6Af3jdAfoB/jv5n72f8W/0f8l7AD+vfyv0Y/YA9AD+Af270b/9V/ifhD/bb9o/Y6AcpxzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHF4hNSzrrhW5DhtIyU3Ks5F5Iay8kZKblXMtszIOWJgDHKdrGRgUoSHIt1J4N7hVAVFKz+SRVDPIqUsS7ITHKCTMrlO2JRYBOyMLcvOeJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuI8AA/v1KQAAAAAAApvoqB5HyVOMsuk2IG84nm2Ql+/qrxW04Y59HRC78outmbVKHNt4NeyvBHaoLD1Fi3l6Yy49WypblCfw8Ii+QDChqCUR+8okglnevQ3G2+57+3MCPYMg/sPJDQvpPHASSdOvLZby1JevfvopIp7KB92HwmZ7i8QAXWCA/rELWAjN85SaOP2SynmRq+9/C1fvaKb9cFo7TYFWOL9hJ1009l+N4+x/MOvywAro3NucAtiYLrH8xriUKeF7qLxIcmYvwhXFa20OyhJc75EyE6zd7eCDTyYKt4+36DJYxdxydGNM9M4A7Iu06JITbT8sZk3OD7CWBAr6WdUqIdZyjYKoU4IkgStaxsvKVMY2gCz9Fjz5mGzb2TB1K0HsrF9HfIMeHs1jUQz4V/PJpsdgjVQTzI97FCwYlouiUtmzLt8XGPxix6qnQpogRqpg2Iof3UPVm2wZgdczx8r06vgAB5IaITyFxQl+8CQ/99uGVrS9EQl/hgJ7sIyeTlkj/D2UQXy9DtV5j2i52EZABzVS6l+N5xyINIXgAlGZ6bz81od9QmiKik2qAYJAG+7aaoYWp4+fwT1Mt2mN09Fn6ds/tLb1n1lXvIPcAAAAAAAAAAAAAAAA=","c83e8aa4a367e01c3a068e659a832fb7":"data:image/webp;base64,UklGRkwFAABXRUJQVlA4WAoAAAAwAAAAjwEAxwAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZBTFBIRAAAAAEPMP8REZIEJCkqIyIaAEX6/58i+p8KItlKvhODqFQjCkFcIlhE/ycAKBB//k5EpKzFtndLbtuwpLbnpe39Wa19/x8CVlA4IBIDAADwJQCdASqQAcgAPlEmkkYjoiGhJD4YIHAKCWdu4XXuABm8I7/c/yj2xnp34fflFyTfcD9jssD4V/t35Z/5L3n/w/8h/kB5gH6Af3jdAfoB/jv5n72f8W/0f8l7AD+vfyv0Y/YA9AD+Af270b/9V/ifhD/bb9o/Y6AcpxzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHF4hNSzrrhW5DhtIyU3Ks5F5Iay8kZKblXMtszIOWJgDHKdrGRgUoSHIt1J4N7hVAVFKz+SRVDPIqUsS7ITHKCTMrlO2JRYBOyMLcvOeJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuI8AA/v1KQAAAAAAApvoqB5HyVOMsuk2IG84nm2Ql+/qrxW04Y59HRC78outmbVKHNt4NeyvBHaoLD1Fi3l6Yy49WypblCfw8Ii+QDChqCUR+8okglnevQ3G2+57+3MCPYMg/sPJDQvpPHASSdOvLZby1JevfvopIp7KB92HwmZ7i8QAXWCA/rELWAjN85SaOP2SynmRq+9/C1fvaKb9cFo7TYFWOL9hJ1009l+N4+x/MOvywAro3NucAtiYLrH8xriUKeF7qLxIcmYvwhXFa20OyhJc75EyE6zd7eCDTyYKt4+36DJYxdxydGNM9M4A7Iu06JITbT8sZk3OD7CWBAr6WdUqIdZyjYKoU4IkgStaxsvKVMY2gCz9Fjz5mGzb2TB1K0HsrF9HfIMeHs1jUQz4V/PJpsdgjVQTzI97FCwYlouiUtmzLt8XGPxix6qnQpogRqpg2Iof3UPVm2wZgdczx8r06vgAB5IaITyFxQl+8CQ/99uGVrS9EQl/hgJ7sIyeTlkj/D2UQXy9DtV5j2i52EZABzVS6l+N5xyINIXgAlGZ6bz81od9QmiKik2qAYJAG+7aaoYWp4+fwT1Mt2mN09Fn6ds/tLb1n1lXvIPcAAAAAAAAAAAAAAAA=","5fb3da04b014ebdab7467d55eeed9f05":"data:image/webp;base64,UklGRkwFAABXRUJQVlA4WAoAAAAwAAAAjwEAxwAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZBTFBIRAAAAAEPMP8REZIEJCkqIyIaAEX6/58i+p8KItlKvhODqFQjCkFcIlhE/ycAKBB//k5EpKzFtndLbtuwpLbnpe39Wa19/x8CVlA4IBIDAADwJQCdASqQAcgAPlEmkkYjoiGhJD4YIHAKCWdu4XXuABm8I7/c/yj2xnp34fflFyTfcD9jssD4V/t35Z/5L3n/w/8h/kB5gH6Af3jdAfoB/jv5n72f8W/0f8l7AD+vfyv0Y/YA9AD+Af270b/9V/ifhD/bb9o/Y6AcpxzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHOOcc45xzjnHF4hNSzrrhW5DhtIyU3Ks5F5Iay8kZKblXMtszIOWJgDHKdrGRgUoSHIt1J4N7hVAVFKz+SRVDPIqUsS7ITHKCTMrlO2JRYBOyMLcvOeJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuJcS4lxLiXEuI8AA/v1KQAAAAAAApvoqB5HyVOMsuk2IG84nm2Ql+/qrxW04Y59HRC78outmbVKHNt4NeyvBHaoLD1Fi3l6Yy49WypblCfw8Ii+QDChqCUR+8okglnevQ3G2+57+3MCPYMg/sPJDQvpPHASSdOvLZby1JevfvopIp7KB92HwmZ7i8QAXWCA/rELWAjN85SaOP2SynmRq+9/C1fvaKb9cFo7TYFWOL9hJ1009l+N4+x/MOvywAro3NucAtiYLrH8xriUKeF7qLxIcmYvwhXFa20OyhJc75EyE6zd7eCDTyYKt4+36DJYxdxydGNM9M4A7Iu06JITbT8sZk3OD7CWBAr6WdUqIdZyjYKoU4IkgStaxsvKVMY2gCz9Fjz5mGzb2TB1K0HsrF9HfIMeHs1jUQz4V/PJpsdgjVQTzI97FCwYlouiUtmzLt8XGPxix6qnQpogRqpg2Iof3UPVm2wZgdczx8r06vgAB5IaITyFxQl+8CQ/99uGVrS9EQl/hgJ7sIyeTlkj/D2UQXy9DtV5j2i52EZABzVS6l+N5xyINIXgAlGZ6bz81od9QmiKik2qAYJAG+7aaoYWp4+fwT1Mt2mN09Fn6ds/tLb1n1lXvIPcAAAAAAAAAAAAAAAA="}};</script><script id="app-js">
+(function(){
+"use strict";
+
+/* ============ constants + tiny helpers ============ */
+var EMBED = window.__EMBED__ || null;
+var APP_SHELL = document.getElementById("app").innerHTML;
+var FONT_LINKS =
+  '<link rel="preconnect" href="https://fonts.googleapis.com">' +
+  '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
+  '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap">';
+
+function $(id){ return document.getElementById(id); }
+function el(tag, cls, txt){ var n=document.createElement(tag); if(cls)n.className=cls; if(txt!=null)n.textContent=txt; return n; }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function pad2(n){ return n<10 ? "0"+n : ""+n; }
+function fmtTime(ms){
+  var s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60);
+  s%=60; m%=60;
+  return h ? h+":"+pad2(m)+":"+pad2(s) : m+":"+pad2(s);
+}
+
+/* ============ state ============ */
+function blankPuzzle(rows, cols){
+  return {
+    id:null, title:"Untitled puzzle", author:"",
+    rows:rows, cols:cols,
+    blocks:new Array(rows*cols).fill(false),
+    fill:new Array(rows*cols).fill(""),
+    clues:{},
+    pins:[]
+  };
+}
+
+var S = {
+  puzzle: blankPuzzle(11,11),
+  mode: "build",
+  tool: "letters",
+  symmetry: true,
+  showLines: true,
+  cur: {r:0, c:0, dir:"A"},
+  activePin: null,
+  play: null,
+  dirty: false,
+  saving: false,
+  db: null, assets: null, downloads: null,
+  capsResolved: false
+};
+
+/* ============ geometry ============ */
+function I(r,c){ return r*S.puzzle.cols + c; }
+function RC(i){ return {r:Math.floor(i/S.puzzle.cols), c:i%S.puzzle.cols}; }
+function inBounds(r,c){ return r>=0 && c>=0 && r<S.puzzle.rows && c<S.puzzle.cols; }
+function isBlock(i){ return !!S.puzzle.blocks[i]; }
+
+function numbering(){
+  var p=S.puzzle, nums=new Array(p.rows*p.cols).fill(0), entries=[], n=0;
+  for(var r=0;r<p.rows;r++){
+    for(var c=0;c<p.cols;c++){
+      var i=r*p.cols+c;
+      if(p.blocks[i]) continue;
+      var leftBlk = (c===0) || p.blocks[i-1];
+      var rightOpen = (c+1<p.cols) && !p.blocks[i+1];
+      var upBlk = (r===0) || p.blocks[i-p.cols];
+      var downOpen = (r+1<p.rows) && !p.blocks[i+p.cols];
+      var sa = leftBlk && rightOpen, sd = upBlk && downOpen;
+      if(sa||sd){ n++; nums[i]=n; }
+      if(sa){ var ca=[],cc=c; while(cc<p.cols && !p.blocks[r*p.cols+cc]){ ca.push(r*p.cols+cc); cc++; }
+        entries.push({num:n,dir:"A",cells:ca,key:n+"A"}); }
+      if(sd){ var cd=[],rr=r; while(rr<p.rows && !p.blocks[rr*p.cols+c]){ cd.push(rr*p.cols+c); rr++; }
+        entries.push({num:n,dir:"D",cells:cd,key:n+"D"}); }
+    }
+  }
+  var byCell={};
+  entries.forEach(function(e){
+    e.cells.forEach(function(ci){ (byCell[ci]=byCell[ci]||{})[e.dir]=e; });
+  });
+  return {nums:nums, entries:entries, byCell:byCell};
+}
+var NUM = null;
+function renum(){ NUM = numbering(); }
+
+function curEntry(){
+  var i=I(S.cur.r,S.cur.c);
+  var b=NUM.byCell[i];
+  if(!b) return null;
+  return b[S.cur.dir] || b[S.cur.dir==="A"?"D":"A"] || null;
+}
+
+/* ============ grid editing ============ */
+function mirror(i){
+  var p=S.puzzle;
+  return (p.rows*p.cols - 1) - i;
+}
+function placeBlock(i){
+  var p=S.puzzle;
+  if(p.blocks[i]) return;
+  p.blocks[i]=true; p.fill[i]="";
+  if(S.symmetry){ var m=mirror(i); if(m!==i){ p.blocks[m]=true; p.fill[m]=""; } }
+  S.dirty=true; renum(); renderAll();
+}
+function removeBlock(i){
+  var p=S.puzzle;
+  if(!p.blocks[i]) return;
+  p.blocks[i]=false;
+  if(S.symmetry){ var m=mirror(i); if(m!==i) p.blocks[m]=false; }
+  S.dirty=true; renum(); renderAll();
+}
+function resize(rows, cols){
+  var p=S.puzzle;
+  rows=clamp(rows|0,3,21); cols=clamp(cols|0,3,21);
+  var nb=new Array(rows*cols).fill(false), nf=new Array(rows*cols).fill("");
+  for(var r=0;r<Math.min(rows,p.rows);r++)
+    for(var c=0;c<Math.min(cols,p.cols);c++){
+      nb[r*cols+c]=p.blocks[r*p.cols+c];
+      nf[r*cols+c]=p.fill[r*p.cols+c];
+    }
+  p.pins=p.pins.filter(function(pin){ return pin.r<rows && pin.c<cols; });
+  p.rows=rows; p.cols=cols; p.blocks=nb; p.fill=nf;
+  S.cur={r:0,c:0,dir:"A"};
+  S.dirty=true; renum(); renderAll();
+}
+
+/* ============ cursor movement ============ */
+function firstOpen(){
+  for(var i=0;i<S.puzzle.blocks.length;i++) if(!S.puzzle.blocks[i]) return RC(i);
+  return {r:0,c:0};
+}
+function setCur(r,c,dir){
+  if(!inBounds(r,c)) return;
+  S.cur.r=r; S.cur.c=c;
+  if(dir) S.cur.dir=dir;
+  renderGrid(); renderPanel(); renderFoot();
+}
+function step(dr,dc,skipBlocks){
+  var r=S.cur.r+dr, c=S.cur.c+dc, guard=0;
+  while(inBounds(r,c) && guard++<64){
+    if(!skipBlocks || !isBlock(I(r,c))){ setCur(r,c); return true; }
+    r+=dr; c+=dc;
+  }
+  return false;
+}
+function advance(){
+  var e=curEntry(); if(!e) return;
+  var i=I(S.cur.r,S.cur.c), k=e.cells.indexOf(i);
+  if(k>-1 && k<e.cells.length-1){ var n=RC(e.cells[k+1]); setCur(n.r,n.c); }
+}
+function retreat(){
+  var e=curEntry(); if(!e) return false;
+  var i=I(S.cur.r,S.cur.c), k=e.cells.indexOf(i);
+  if(k>0){ var n=RC(e.cells[k-1]); setCur(n.r,n.c); return true; }
+  return false;
+}
+function gotoEntry(e){
+  if(!e||!e.cells.length) return;
+  var n=RC(e.cells[0]);
+  S.cur.dir=e.dir;
+  setCur(n.r,n.c,e.dir);
+}
+function jumpEntry(delta){
+  var list=NUM.entries, e=curEntry();
+  if(!list.length) return;
+  var idx=e?list.indexOf(e):-1;
+  gotoEntry(list[(idx+delta+list.length)%list.length]);
+}
+function firstBlankIn(e){
+  var arr=activeLetters();
+  for(var k=0;k<e.cells.length;k++) if(!arr[e.cells[k]]) return e.cells[k];
+  return e.cells[0];
+}
+
+/* ============ letters ============ */
+function activeLetters(){
+  return S.mode==="play" ? S.play.grid : S.puzzle.fill;
+}
+function typeLetter(ch){
+  var i=I(S.cur.r,S.cur.c);
+  if(isBlock(i)) return;
+  if(S.mode==="play" && S.play.locked[i]) { advance(); return; }
+  activeLetters()[i]=ch.toUpperCase();
+  if(S.mode==="play"){ S.play.wrong[i]=false; saveProgress(); }
+  else { S.dirty=true; }
+  renum(); renderGrid(); renderPanel();
+  advance();
+}
+function eraseLetter(){
+  var i=I(S.cur.r,S.cur.c);
+  if(isBlock(i)){
+    if(S.mode==="build") removeBlock(i);
+    else retreat();
+    return;
+  }
+  if(S.mode==="play" && S.play.locked[i]){ retreat(); return; }
+  if(activeLetters()[i]){ activeLetters()[i]=""; if(S.mode==="play"){S.play.wrong[i]=false;saveProgress();} else S.dirty=true; }
+  else { retreat(); var j=I(S.cur.r,S.cur.c); if(!isBlock(j) && !(S.mode==="play"&&S.play.locked[j])){ activeLetters()[j]=""; if(S.mode==="play")S.play.wrong[j]=false; } }
+  renum(); renderGrid(); renderPanel();
+}
+
+/* ============ play session ============ */
+function startPlay(){
+  var n=S.puzzle.rows*S.puzzle.cols;
+  S.play={ grid:new Array(n).fill(""), wrong:new Array(n).fill(false),
+           locked:new Array(n).fill(false), started:Date.now(), elapsed:0, done:false };
+  loadProgress();
+  var f=firstOpen(); S.cur={r:f.r,c:f.c,dir:"A"};
+  renum();
+  var e=curEntry(); if(e) gotoEntry(e);
+}
+function progressKey(){ return "gridpin:v1:" + (S.puzzle.id || "local:" + S.puzzle.title); }
+function saveProgress(){
+  if(!S.play) return;
+  try{
+    localStorage.setItem(progressKey(), JSON.stringify({
+      g:S.play.grid.join("\u0001"), l:S.play.locked, e:S.play.elapsed, r:S.puzzle.rows, c:S.puzzle.cols
+    }));
+  }catch(err){}
+}
+function loadProgress(){
+  try{
+    var raw=localStorage.getItem(progressKey());
+    if(!raw) return;
+    var d=JSON.parse(raw);
+    if(d.r!==S.puzzle.rows||d.c!==S.puzzle.cols) return;
+    var g=String(d.g||"").split("\u0001");
+    if(g.length===S.play.grid.length) S.play.grid=g;
+    if(Array.isArray(d.l)&&d.l.length===S.play.locked.length) S.play.locked=d.l;
+    S.play.elapsed=d.e||0;
+  }catch(err){}
+}
+function clearProgress(){ try{ localStorage.removeItem(progressKey()); }catch(err){} }
+
+function hasSolution(){ return S.puzzle.fill.some(function(v,i){ return !S.puzzle.blocks[i] && v; }); }
+function checkCells(cells, mark){
+  var any=false;
+  cells.forEach(function(i){
+    if(S.puzzle.blocks[i]) return;
+    var sol=S.puzzle.fill[i];
+    if(!sol) return;
+    var got=S.play.grid[i];
+    if(!got) return;
+    if(got!==sol){ if(mark) S.play.wrong[i]=true; any=true; }
+    else S.play.wrong[i]=false;
+  });
+  return any;
+}
+function revealCells(cells){
+  cells.forEach(function(i){
+    if(S.puzzle.blocks[i]) return;
+    var sol=S.puzzle.fill[i];
+    if(!sol) return;
+    S.play.grid[i]=sol; S.play.wrong[i]=false; S.play.locked[i]=true;
+  });
+  saveProgress();
+}
+function isComplete(){
+  var p=S.puzzle, ok=true, any=false;
+  for(var i=0;i<p.blocks.length;i++){
+    if(p.blocks[i]) continue;
+    if(!p.fill[i]) continue;
+    any=true;
+    if(S.play.grid[i]!==p.fill[i]) { ok=false; break; }
+  }
+  return any && ok;
+}
+
+/* ============ rendering ============ */
+function sizeGrid(){
+  var p=S.puzzle;
+  var stage=document.querySelector(".stage");
+  var availW=(stage?stage.clientWidth:320)-6;
+  var chrome = S.mode==="play" ? 250 : 230;
+  var availH=Math.max(200, window.innerHeight-chrome);
+  var cell=Math.floor(Math.min(availW/p.cols, availH/p.rows));
+  cell=clamp(cell,13,46);
+  var root=document.documentElement.style;
+  root.setProperty("--cell", cell+"px");
+  root.setProperty("--cols", p.cols);
+  root.setProperty("--rows", p.rows);
+}
+
+function renderBlocks(){
+  var p=S.puzzle, host=$("blocklayer");
+  host.textContent="";
+  var frag=document.createDocumentFragment();
+  for(var i=0;i<p.rows*p.cols;i++){
+    frag.appendChild(el("div","b"+(p.blocks[i]?" blk":"")));
+  }
+  host.appendChild(frag);
+}
+function renderGrid(){
+  var p=S.puzzle, g=$("grid"), letters=activeLetters();
+  var e=curEntry();
+  var inWord={};
+  if(e) e.cells.forEach(function(i){ inWord[i]=true; });
+  var selI=I(S.cur.r,S.cur.c);
+  var frag=document.createDocumentFragment();
+  for(var i=0;i<p.rows*p.cols;i++){
+    var d=el("div","cell");
+    d.dataset.i=i;
+    if(p.blocks[i]) d.className+=" blk";
+    else{
+      if(inWord[i]) d.className+=" word";
+      var num=NUM.nums[i];
+      if(num) d.appendChild(el("span","num",String(num)));
+      var ch=letters[i];
+      if(ch){
+        var sp=el("span","ltr",ch);
+        d.appendChild(sp);
+        if(S.mode==="play"){
+          if(S.play.wrong[i]) d.className+=" wrong";
+          else if(S.play.locked[i]) d.className+=" given";
+        }
+      }
+    }
+    if(i===selI) d.className+=" sel";
+    frag.appendChild(d);
+  }
+  g.textContent="";
+  g.appendChild(frag);
+}
+
+function pinSrc(pin){
+  if(pin.data) return pin.data;
+  if(EMBED && EMBED.images && EMBED.images[pin.assetId]) return EMBED.images[pin.assetId];
+  if(pin.assetId) return "/_blob/"+pin.assetId;
+  return "";
+}
+function pinBox(pin){
+  var p=S.puzzle;
+  return {
+    left:(pin.c/p.cols*100)+"%",
+    top:(pin.r/p.rows*100)+"%",
+    width:(pin.w/p.cols*100)+"%",
+    height:(pin.h/p.rows*100)+"%"
+  };
+}
+function renderPins(){
+  var p=S.puzzle, host=$("pins");
+  host.textContent="";
+  p.pins.forEach(function(pin, idx){
+    var n=el("div","pin");
+    var b=pinBox(pin);
+    n.style.left=b.left; n.style.top=b.top; n.style.width=b.width; n.style.height=b.height;
+    if(pin.rot) n.style.transform="rotate("+pin.rot+"deg)";
+    n.style.opacity=(pin.op==null?1:pin.op);
+    var img=el("img");
+    img.src=pinSrc(pin);
+    img.alt=pin.alt||"";
+    img.draggable=false;
+    img.style.objectFit=(pin.fit==="cover"?"cover":"contain");
+    n.appendChild(img);
+    host.appendChild(n);
+  });
+  renderHandles();
+}
+function renderHandles(){
+  var host=$("handles");
+  host.textContent="";
+  if(!(S.mode==="build" && S.tool==="images")) { host.style.display="none"; return; }
+  host.style.display="";
+  S.puzzle.pins.forEach(function(pin, idx){
+    var h=el("div","handle"+(S.activePin===idx?" active":""));
+    h.dataset.idx=idx;
+    var b=pinBox(pin);
+    h.style.left=b.left; h.style.top=b.top; h.style.width=b.width; h.style.height=b.height;
+    if(S.activePin===idx){
+      var g=el("div","grip");
+      g.dataset.grip="1";
+      h.appendChild(g);
+    }
+    host.appendChild(h);
+  });
+}
+
+function renderHead(){
+  var h=$("stage-head");
+  h.textContent="";
+  if(S.mode==="play"){
+    h.className="";
+    var wrap=el("div");
+    wrap.appendChild(el("h2","solo-title",S.puzzle.title||"Untitled puzzle"));
+    if(S.puzzle.author) wrap.appendChild(el("p","solo-by","by "+S.puzzle.author));
+    h.appendChild(wrap);
+    return;
+  }
+  h.className="tools";
+  var seg=el("div","seg");
+  [["letters","Answers"],["images","Images"]].forEach(function(t){
+    var b=el("button",null,t[1]);
+    b.setAttribute("aria-pressed", S.tool===t[0]?"true":"false");
+    b.onclick=function(){ S.tool=t[0]; S.activePin=null; renderAll(); };
+    seg.appendChild(b);
+  });
+  h.appendChild(seg);
+
+  var rIn=el("input","num-in"); rIn.type="number"; rIn.min=3; rIn.max=21; rIn.value=S.puzzle.rows;
+  var cIn=el("input","num-in"); cIn.type="number"; cIn.min=3; cIn.max=21; cIn.value=S.puzzle.cols;
+  function apply(){ resize(parseInt(rIn.value,10), parseInt(cIn.value,10)); }
+  rIn.onchange=apply; cIn.onchange=apply;
+  var lab=el("label"); lab.appendChild(el("span",null,"Size")); lab.appendChild(rIn);
+  lab.appendChild(el("span",null,"x")); lab.appendChild(cIn);
+  h.appendChild(lab);
+
+  var sy=el("label","chk");
+  var cb=el("input"); cb.type="checkbox"; cb.checked=S.symmetry;
+  cb.onchange=function(){ S.symmetry=cb.checked; };
+  sy.appendChild(cb); sy.appendChild(el("span",null,"Mirror blocks"));
+  h.appendChild(sy);
+}
+
+function renderFoot(){
+  var f=$("stage-foot");
+  f.textContent="";
+  f.className="";
+  if(S.mode!=="play"){
+    if(S.tool==="letters") f.appendChild(el("p","hint","Type answers into the grid \u2014 Enter or tapping twice switches across/down. Press the period key to place a black square, Backspace/Delete to remove one. Drag a .puz file onto the grid to import it."));
+    else f.appendChild(el("p","hint","Pick a square, add an image, then drag it into place or drag its corner to resize."));
+    return;
+  }
+  var e=curEntry();
+  var bar=el("div","cluebar");
+  bar.appendChild(el("span","tag", e ? e.num+(e.dir==="A"?" Across":" Down") : "—"));
+  bar.appendChild(el("span","txt", e ? (S.puzzle.clues[e.key] || "(no clue written)") : "Tap a square to begin"));
+  var arr=el("div","arrows");
+  var prev=el("button",null,"\u2039"); prev.title="Previous clue"; prev.onclick=function(){ jumpEntry(-1); };
+  var next=el("button",null,"\u203a"); next.title="Next clue"; next.onclick=function(){ jumpEntry(1); };
+  arr.appendChild(prev); arr.appendChild(next);
+  bar.appendChild(arr);
+  f.appendChild(bar);
+
+  if(S.play.done){
+    var b=el("div","banner","Solved in "+fmtTime(S.play.elapsed)+". Nice work.");
+    b.style.marginTop="10px";
+    f.appendChild(b);
+  }
+}
+
+function clueListItem(e, editable){
+  var li=el("li");
+  if(curEntry()===e) li.className="on";
+  li.appendChild(el("span","n",String(e.num)));
+  var c=el("div","c");
+  if(editable){
+    var inp=el("input","c");
+    inp.value=S.puzzle.clues[e.key]||"";
+    inp.placeholder="Clue for "+e.num+(e.dir==="A"?" across":" down");
+    inp.onfocus=function(){ gotoEntry(e); };
+    inp.oninput=function(){ S.puzzle.clues[e.key]=inp.value; S.dirty=true; };
+    c.appendChild(inp);
+    var word=e.cells.map(function(i){ return S.puzzle.fill[i]||"\u00b7"; }).join("");
+    c.appendChild(el("div","ans",word+"  ("+e.cells.length+")"));
+  }else{
+    var b=el("button","c", S.puzzle.clues[e.key]||"(no clue written)");
+    b.onclick=function(){ gotoEntry(e); };
+    c.appendChild(b);
+  }
+  li.appendChild(c);
+  return li;
+}
+
+function renderPanel(){
+  var col=$("panel-col");
+  col.textContent="";
+  if(S.mode==="build") buildPanels(col);
+  else playPanels(col);
+}
+
+function panel(title){
+  var p=el("section","panel");
+  p.appendChild(el("h2",null,title));
+  var b=el("div","body");
+  p.appendChild(b);
+  return {root:p, body:b};
+}
+
+function buildPanels(col){
+  // meta
+  var meta=panel("Puzzle");
+  var t=el("label","field"); t.appendChild(el("span",null,"Title"));
+  var ti=el("input"); ti.value=S.puzzle.title; ti.oninput=function(){ S.puzzle.title=ti.value; S.dirty=true; };
+  t.appendChild(ti); meta.body.appendChild(t);
+  var a=el("label","field"); a.appendChild(el("span",null,"By"));
+  var ai=el("input"); ai.value=S.puzzle.author; ai.placeholder="Your name"; ai.oninput=function(){ S.puzzle.author=ai.value; S.dirty=true; };
+  a.appendChild(ai); meta.body.appendChild(a);
+  col.appendChild(meta.root);
+
+  var linesP=panel("Grid lines");
+  var lc=el("label","chk");
+  var lcb=el("input"); lcb.type="checkbox"; lcb.checked=S.showLines;
+  lcb.onchange=function(){ S.showLines=lcb.checked; applyLineVisibility(); };
+  lc.appendChild(lcb); lc.appendChild(el("span",null,"Show grid lines"));
+  linesP.body.appendChild(lc);
+  linesP.body.appendChild(el("p","hint","Turning this off just hides the lines while you work \u2014 it doesn't change the puzzle."));
+  var dlg=el("button","btn quiet","Download grid lines (PNG)");
+  dlg.onclick=exportGridPng;
+  linesP.body.appendChild(dlg);
+  col.appendChild(linesP.root);
+
+  if(S.tool==="images"){
+    col.appendChild(imagePanel());
+    return;
+  }
+
+  var across=NUM.entries.filter(function(e){return e.dir==="A";});
+  var down=NUM.entries.filter(function(e){return e.dir==="D";});
+  [["Across",across],["Down",down]].forEach(function(pair){
+    var p=panel(pair[0]);
+    p.body.className="body tight";
+    if(!pair[1].length){ p.body.appendChild(el("div","empty","No entries yet.")); }
+    else{
+      var ul=el("ul","clues");
+      pair[1].forEach(function(e){ ul.appendChild(clueListItem(e,true)); });
+      p.body.appendChild(ul);
+    }
+    col.appendChild(p.root);
+  });
+}
+
+function imagePanel(){
+  var p=panel("Images");
+  var i=I(S.cur.r,S.cur.c);
+  var rc=RC(i);
+  p.body.appendChild(el("p","hint","Selected square: row "+(rc.r+1)+", column "+(rc.c+1)+". A new image lands there, sitting in the grid background under the letters. Transparent PNGs work best."));
+  var add=el("button","btn primary","Add image here");
+  add.onclick=pickImage;
+  p.body.appendChild(add);
+
+  if(!S.puzzle.pins.length){
+    p.root.appendChild(el("div","empty","No images yet. They become part of the white background \u2014 letters, numbers and grid lines draw on top."));
+    return p.root;
+  }
+
+  var ul=el("ul","pinlist");
+  S.puzzle.pins.forEach(function(pin,idx){
+    var li=el("li"); if(S.activePin===idx) li.className="on";
+    var im=el("img"); im.src=pinSrc(pin); im.alt="";
+    li.appendChild(im);
+    var m=el("div","meta","r"+(pin.r+1)+" c"+(pin.c+1)+" \u00b7 "+pin.w+"\u00d7"+pin.h);
+    li.appendChild(m);
+    var sel=el("button","btn quiet", S.activePin===idx ? "Editing" : "Edit");
+    sel.onclick=function(){ S.activePin = (S.activePin===idx?null:idx); renderAll(); };
+    li.appendChild(sel);
+    ul.appendChild(li);
+  });
+  var listBody=el("div","body tight"); listBody.appendChild(ul);
+  p.root.appendChild(listBody);
+
+  if(S.activePin!=null && S.puzzle.pins[S.activePin]){
+    var pin=S.puzzle.pins[S.activePin];
+    var ed=el("div","body");
+    ed.style.borderTop="1px solid var(--line)";
+
+    function numField(label, key, min, max){
+      var f=el("label","field"); f.appendChild(el("span",null,label));
+      var inp=el("input"); inp.type="number"; inp.min=min; inp.max=max; inp.value=pin[key];
+      inp.oninput=function(){
+        pin[key]=clamp(parseInt(inp.value,10)||min,min,max);
+        S.dirty=true; renderPins();
+      };
+      f.appendChild(inp); return f;
+    }
+    var row=el("div","row");
+    row.appendChild(numField("Width (squares)","w",1,S.puzzle.cols));
+    row.appendChild(numField("Height (squares)","h",1,S.puzzle.rows));
+    ed.appendChild(row);
+
+    function slider(label, key, min, max, stepv, scale){
+      var f=el("label","field"); f.appendChild(el("span",null,label));
+      var inp=el("input","slider"); inp.type="range"; inp.min=min; inp.max=max; inp.step=stepv;
+      inp.value=pin[key]==null?(key==="op"?1:0):pin[key];
+      inp.oninput=function(){ pin[key]=parseFloat(inp.value); S.dirty=true; renderPins(); };
+      f.appendChild(inp); return f;
+    }
+    var ff=el("label","field"); ff.appendChild(el("span",null,"Shape"));
+    var fs=el("select");
+    [["contain","Whole image, no cropping"],["cover","Fill the area, crop edges"]].forEach(function(o){
+      var op=el("option",null,o[1]); op.value=o[0];
+      if((pin.fit||"contain")===o[0]) op.selected=true;
+      fs.appendChild(op);
+    });
+    fs.onchange=function(){ pin.fit=fs.value; S.dirty=true; renderPins(); };
+    ff.appendChild(fs); ed.appendChild(ff);
+
+    ed.appendChild(slider("Opacity","op",0.1,1,0.05));
+    ed.appendChild(slider("Tilt","rot",-15,15,1));
+
+    var del=el("button","btn danger","Remove image");
+    del.style.marginTop="10px";
+    del.onclick=function(){
+      S.puzzle.pins.splice(S.activePin,1); S.activePin=null; S.dirty=true; renderAll();
+    };
+    ed.appendChild(del);
+    p.root.appendChild(ed);
+  }
+  return p.root;
+}
+
+function playPanels(col){
+  var tools=panel("Solving");
+  var stat=el("div","stat");
+  var timeB=el("b", null, fmtTime(S.play.elapsed));
+  timeB.id="timer";
+  var tw=el("span"); tw.appendChild(document.createTextNode("Time ")); tw.appendChild(timeB);
+  stat.appendChild(tw);
+  var filled=0, total=0;
+  S.puzzle.blocks.forEach(function(b,i){ if(!b){ total++; if(S.play.grid[i]) filled++; } });
+  var fw=el("span"); fw.appendChild(document.createTextNode("Filled "));
+  fw.appendChild(el("b",null,filled+"/"+total));
+  stat.appendChild(fw);
+  tools.body.appendChild(stat);
+
+  if(!hasSolution()){
+    tools.body.appendChild(el("p","hint","This puzzle has no answers saved, so checking is off."));
+  }else{
+    var g1=el("div","row"); g1.style.marginTop="10px";
+    g1.appendChild(mkBtn("Check word", function(){
+      var e=curEntry(); if(!e) return;
+      checkCells(e.cells,true); renderGrid(); renderPanel();
+    }));
+    g1.appendChild(mkBtn("Check grid", function(){
+      var all=[]; for(var i=0;i<S.puzzle.blocks.length;i++) all.push(i);
+      var bad=checkCells(all,true);
+      renderGrid(); renderPanel();
+      toast(bad ? "Some letters are wrong." : "Everything you've filled in is right.");
+    }));
+    tools.body.appendChild(g1);
+    var g2=el("div","row"); g2.style.marginTop="7px";
+    g2.appendChild(mkBtn("Reveal letter", function(){
+      revealCells([I(S.cur.r,S.cur.c)]); afterFill();
+    }));
+    g2.appendChild(mkBtn("Reveal word", function(){
+      var e=curEntry(); if(e) revealCells(e.cells); afterFill();
+    }));
+    tools.body.appendChild(g2);
+  }
+  var clr=el("button","btn quiet","Start over");
+  clr.style.marginTop="10px";
+  clr.onclick=function(){
+    confirmModal("Start over?", "Everything you've typed in this puzzle will be cleared.", "Clear it", true, function(){
+      clearProgress(); startPlay(); renderAll();
+    });
+  };
+  tools.body.appendChild(clr);
+  col.appendChild(tools.root);
+
+  var across=NUM.entries.filter(function(e){return e.dir==="A";});
+  var down=NUM.entries.filter(function(e){return e.dir==="D";});
+  [["Across",across],["Down",down]].forEach(function(pair){
+    var p=panel(pair[0]);
+    p.body.className="body tight";
+    if(!pair[1].length) p.body.appendChild(el("div","empty","No entries."));
+    else{
+      var ul=el("ul","clues");
+      pair[1].forEach(function(e){ ul.appendChild(clueListItem(e,false)); });
+      p.body.appendChild(ul);
+    }
+    col.appendChild(p.root);
+  });
+}
+function mkBtn(label, fn){ var b=el("button","btn",label); b.onclick=fn; return b; }
+function afterFill(){
+  renderGrid(); renderPanel();
+  if(isComplete() && !S.play.done){ S.play.done=true; renderFoot(); }
+}
+
+function renderActs(){
+  var a=$("acts");
+  a.textContent="";
+  if(EMBED) return;
+  if(S.mode==="build"){
+    var nw=mkBtn("New", function(){
+      function doNew(){
+        S.puzzle=blankPuzzle(11,11); S.dirty=false; S.activePin=null;
+        try{ history.replaceState(null,"",location.pathname); }catch(e){}
+        renum(); renderAll();
+      }
+      if(S.dirty) confirmModal("Start a new puzzle?", "Unsaved changes to the current puzzle will be lost.", "Start new", true, doNew);
+      else doNew();
+    });
+    nw.className="btn quiet";
+    a.appendChild(nw);
+    var op=mkBtn("Open", openDialog); op.className="btn quiet"; a.appendChild(op);
+    var im=mkBtn("Import .puz", pickPuz); im.className="btn quiet"; a.appendChild(im);
+    var sh=mkBtn("Share", shareDialog); a.appendChild(sh);
+    var sv=mkBtn(S.saving?"Saving\u2026":"Save", savePuzzle);
+    sv.className="btn primary"; sv.disabled=S.saving;
+    a.appendChild(sv);
+  }else{
+    var back=mkBtn("Back to building", function(){ setMode("build"); });
+    back.className="btn quiet";
+    a.appendChild(back);
+  }
+}
+
+function applyLineVisibility(){
+  var gw=$("gridwrap");
+  if(gw) gw.classList.toggle("no-lines", !S.showLines);
+}
+function renderAll(){
+  renum();
+  sizeGrid();
+  applyLineVisibility();
+  renderHead();
+  renderBlocks();
+  renderGrid();
+  renderPins();
+  renderPanel();
+  renderFoot();
+  renderActs();
+}
+
+function setMode(m){
+  S.mode=m;
+  document.querySelectorAll("#modes button").forEach(function(b){
+    b.setAttribute("aria-pressed", b.dataset.mode===m ? "true":"false");
+  });
+  if(m==="play") startPlay();
+  else { S.play=null; var f=firstOpen(); S.cur={r:f.r,c:f.c,dir:"A"}; }
+  renderAll();
+}
+
+/* ============ input ============ */
+function onCellPointer(ev){
+  var cell=ev.target.closest(".cell");
+  if(!cell) return;
+  var i=parseInt(cell.dataset.i,10);
+  var rc=RC(i);
+  if(isBlock(i)){
+    if(S.mode==="build"){ setCur(rc.r,rc.c); focusKbd(); }
+    return;
+  }
+  if(rc.r===S.cur.r && rc.c===S.cur.c){
+    S.cur.dir = S.cur.dir==="A" ? "D" : "A";
+    var b=NUM.byCell[i];
+    if(b && !b[S.cur.dir]) S.cur.dir = S.cur.dir==="A"?"D":"A";
+    setCur(rc.r,rc.c);
+  }else{
+    var b2=NUM.byCell[i];
+    var dir=S.cur.dir;
+    if(b2 && !b2[dir]) dir = dir==="A"?"D":"A";
+    setCur(rc.r,rc.c,dir);
+  }
+  focusKbd();
+}
+function focusKbd(){
+  var k=$("kbd");
+  if(!k) return;
+  k.value="";
+  try{ k.focus({preventScroll:true}); }catch(e){ k.focus(); }
+}
+function onKey(ev){
+  if(ev.metaKey||ev.ctrlKey||ev.altKey) return;
+  var k=ev.key;
+  if(k==="ArrowLeft"){ ev.preventDefault(); if(S.cur.dir!=="A") setCur(S.cur.r,S.cur.c,"A"); else step(0,-1,S.mode==="play"); }
+  else if(k==="ArrowRight"){ ev.preventDefault(); if(S.cur.dir!=="A") setCur(S.cur.r,S.cur.c,"A"); else step(0,1,S.mode==="play"); }
+  else if(k==="ArrowUp"){ ev.preventDefault(); if(S.cur.dir!=="D") setCur(S.cur.r,S.cur.c,"D"); else step(-1,0,S.mode==="play"); }
+  else if(k==="ArrowDown"){ ev.preventDefault(); if(S.cur.dir!=="D") setCur(S.cur.r,S.cur.c,"D"); else step(1,0,S.mode==="play"); }
+  else if(k==="Backspace"){ ev.preventDefault(); eraseLetter(); }
+  else if(k==="Delete"){
+    ev.preventDefault();
+    var di=I(S.cur.r,S.cur.c);
+    if(isBlock(di)){ if(S.mode==="build") removeBlock(di); }
+    else{
+      activeLetters()[di]="";
+      if(S.mode==="play"){ S.play.wrong[di]=false; saveProgress(); }
+      renderGrid(); renderPanel();
+    }
+  }
+  else if(k==="Enter"){ ev.preventDefault(); S.cur.dir=S.cur.dir==="A"?"D":"A"; setCur(S.cur.r,S.cur.c); }
+  else if(k==="Tab"){ ev.preventDefault(); jumpEntry(ev.shiftKey?-1:1); }
+  else if(k===" "){ ev.preventDefault(); S.cur.dir=S.cur.dir==="A"?"D":"A"; setCur(S.cur.r,S.cur.c); }
+  else if(k==="."){ if(S.mode==="build"){ ev.preventDefault(); placeBlock(I(S.cur.r,S.cur.c)); } }
+  else if(k.length===1 && /[a-zA-Z0-9]/.test(k)){
+    ev.preventDefault();
+    if(S.mode==="build" && S.tool==="images") return;
+    typeLetter(k);
+    if(S.mode==="play") afterFill();
+  }
+}
+function onInput(ev){
+  var v=$("kbd").value;
+  $("kbd").value="";
+  if(!v) return;
+  var ch=v[v.length-1];
+  if(ch==="."){ if(S.mode==="build") placeBlock(I(S.cur.r,S.cur.c)); return; }
+  if(!/[a-zA-Z0-9]/.test(ch)) return;
+  if(S.mode==="build" && S.tool==="images") return;
+  typeLetter(ch);
+  if(S.mode==="play") afterFill();
+}
+
+/* pin dragging */
+var drag=null;
+function onPinDown(ev){
+  if(!(S.mode==="build" && S.tool==="images")) return false;
+  var node=ev.target.closest(".handle");
+  if(!node) return false;
+  ev.preventDefault();
+  var idx=parseInt(node.dataset.idx,10);
+  var pin=S.puzzle.pins[idx];
+  if(!pin) return false;
+  var resizing = !!(ev.target.dataset && ev.target.dataset.grip);
+  if(S.activePin!==idx){ S.activePin=idx; renderAll(); node=$("handles").querySelector('.handle[data-idx="'+idx+'"]'); }
+  var rect=$("gridwrap").getBoundingClientRect();
+  drag={ idx:idx, mode:resizing?"resize":"move",
+         startX:ev.clientX, startY:ev.clientY,
+         r0:pin.r, c0:pin.c, w0:pin.w, h0:pin.h,
+         cw:rect.width/S.puzzle.cols, ch:rect.height/S.puzzle.rows };
+  if(node) node.classList.add("dragging");
+  try{ ev.target.setPointerCapture(ev.pointerId); }catch(e){}
+  renderPanel();
+  return true;
+}
+function onPinMove(ev){
+  if(!drag) return;
+  var pin=S.puzzle.pins[drag.idx];
+  if(!pin) return;
+  var dc=Math.round((ev.clientX-drag.startX)/drag.cw);
+  var dr=Math.round((ev.clientY-drag.startY)/drag.ch);
+  var changed=false;
+  if(drag.mode==="move"){
+    var nc=clamp(drag.c0+dc, 0, S.puzzle.cols-pin.w);
+    var nr=clamp(drag.r0+dr, 0, S.puzzle.rows-pin.h);
+    if(nc!==pin.c || nr!==pin.r){ pin.c=nc; pin.r=nr; changed=true; }
+  }else{
+    var nw=clamp(drag.w0+dc, 1, S.puzzle.cols-pin.c);
+    var nh=clamp(drag.h0+dr, 1, S.puzzle.rows-pin.r);
+    if(nw!==pin.w || nh!==pin.h){ pin.w=nw; pin.h=nh; changed=true; }
+  }
+  if(changed){ S.dirty=true; renderPins(); }
+}
+function onPinUp(){
+  if(!drag) return;
+  drag=null;
+  renderAll();
+}
+
+/* ============ images ============ */
+function pickImage(){
+  var inp=document.createElement("input");
+  inp.type="file"; inp.accept="image/png,image/jpeg,image/webp,image/gif";
+  inp.onchange=function(){
+    var f=inp.files && inp.files[0];
+    if(f) addImage(f);
+  };
+  inp.click();
+}
+function downscale(file, max){
+  return new Promise(function(res, rej){
+    var img=new Image(), url=URL.createObjectURL(file);
+    img.onload=function(){
+      var w=img.naturalWidth, h=img.naturalHeight;
+      var s=Math.min(1, max/Math.max(w,h));
+      w=Math.max(1,Math.round(w*s)); h=Math.max(1,Math.round(h*s));
+      var cv=document.createElement("canvas"); cv.width=w; cv.height=h;
+      cv.getContext("2d").drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      cv.toBlob(function(b){ b?res(b):rej(new Error("Could not read that image.")); }, "image/webp", 0.85);
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); rej(new Error("Could not read that image.")); };
+    img.src=url;
+  });
+}
+function blobToDataURL(b){
+  return new Promise(function(res,rej){
+    var fr=new FileReader();
+    fr.onload=function(){ res(fr.result); };
+    fr.onerror=function(){ rej(new Error("Could not encode image.")); };
+    fr.readAsDataURL(b);
+  });
+}
+function addImage(file){
+  toast("Adding image\u2026");
+  downscale(file, 560).then(function(blob){
+    if(S.assets){
+      return S.assets.upload(blob, {type:"image/webp"}).then(function(r){
+        return {assetId:r.id};
+      }, function(err){
+        return blobToDataURL(blob).then(function(d){ return {data:d}; });
+      });
+    }
+    return blobToDataURL(blob).then(function(d){ return {data:d}; });
+  }).then(function(ref){
+    var pin={ r:S.cur.r, c:S.cur.c,
+              w:clamp(3,1,S.puzzle.cols-S.cur.c), h:clamp(2,1,S.puzzle.rows-S.cur.r),
+              op:1, rot:0, fit:"contain" };
+    if(ref.assetId) pin.assetId=ref.assetId; else pin.data=ref.data;
+    S.puzzle.pins.push(pin);
+    S.activePin=S.puzzle.pins.length-1;
+    S.dirty=true;
+    renderAll();
+    toast("Image added. Drag it, or drag the corner to resize.");
+  }).catch(function(err){
+    toast(err && err.message ? err.message : "That image could not be added.");
+  });
+}
+
+/* ============ .puz import ============ */
+function parsePuz(buffer){
+  var bytes=new Uint8Array(buffer), view=new DataView(buffer);
+  function ascii(start,len){ var s=""; for(var i=0;i<len;i++) s+=String.fromCharCode(bytes[start+i]); return s; }
+  if(bytes.length < 0x34) throw new Error("That file is too short to be a .puz file.");
+  if(ascii(0x02,11) !== "ACROSS&DOWN") throw new Error("That doesn't look like a .puz file.");
+  var width=bytes[0x2C], height=bytes[0x2D];
+  var numClues=view.getUint16(0x2E,true);
+  var scrambledTag=view.getUint16(0x32,true);
+  var n=width*height;
+  if(n<=0 || width>60 || height>60) throw new Error("This .puz file's grid size looks invalid.");
+  var solOffset=0x34;
+  if(bytes.length < solOffset + 2*n) throw new Error("That .puz file looks truncated.");
+  var solution=bytes.subarray(solOffset, solOffset+n);
+  var stateOffset=solOffset+n, strOffset=stateOffset+n;
+  var useUtf8 = ascii(0x18,4).indexOf("2.")===0;
+  function decode(arr){
+    var s=""; for(var i=0;i<arr.length;i++) s+=String.fromCharCode(arr[i]);
+    if(useUtf8){ try{ return decodeURIComponent(escape(s)); }catch(e){ return s; } }
+    return s;
+  }
+  function decodeEntities(s){
+    return s.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"')
+             .replace(/&#39;|&apos;/g,"'").replace(/&amp;/g,"&");
+  }
+  var pos=strOffset;
+  function readCStr(){
+    var start=pos;
+    while(pos<bytes.length && bytes[pos]!==0) pos++;
+    var s=decodeEntities(decode(bytes.subarray(start,pos)));
+    pos++; return s;
+  }
+  var title=readCStr(), author=readCStr(); readCStr(); // skip copyright
+  var clueTexts=[];
+  for(var i=0;i<numClues;i++) clueTexts.push(readCStr());
+  if(scrambledTag) throw new Error("This .puz file's answers are locked/scrambled, so they can't be imported.");
+  var blocks=new Array(n).fill(false), fill=new Array(n).fill("");
+  for(var k=0;k<n;k++){
+    var ch=String.fromCharCode(solution[k]);
+    if(ch==="."||ch===":") blocks[k]=true;
+    else if(ch!=="-") fill[k]=ch.toUpperCase();
+  }
+  return { title:title||"Imported puzzle", author:author||"", rows:height, cols:width,
+           blocks:blocks, fill:fill, clueTexts:clueTexts };
+}
+function pickPuz(){
+  var inp=document.createElement("input");
+  inp.type="file"; inp.accept=".puz";
+  inp.onchange=function(){ var f=inp.files && inp.files[0]; if(f) importPuz(f); };
+  inp.click();
+}
+function importPuz(file){
+  if(S.dirty){
+    confirmModal("Import this .puz file?", "It will replace the puzzle you're currently working on.", "Import", true, function(){ readPuz(file); });
+  } else readPuz(file);
+}
+function readPuz(file){
+  var reader=new FileReader();
+  reader.onload=function(){
+    var data;
+    try{ data=parsePuz(reader.result); }
+    catch(err){ toast(err && err.message ? err.message : "Couldn't read that .puz file."); return; }
+    var rows=clamp(data.rows,3,21), cols=clamp(data.cols,3,21);
+    var cropped = (rows!==data.rows || cols!==data.cols);
+    var p=blankPuzzle(rows,cols);
+    p.title=data.title; p.author=data.author;
+    for(var r=0;r<rows;r++) for(var c=0;c<cols;c++){
+      if(r<data.rows && c<data.cols){
+        var si=r*data.cols+c, di=r*cols+c;
+        p.blocks[di]=data.blocks[si]; p.fill[di]=data.fill[si];
+      }
+    }
+    S.puzzle=p; S.activePin=null; S.dirty=true;
+    renum();
+    if(!cropped && NUM.entries.length===data.clueTexts.length){
+      NUM.entries.forEach(function(e,i){ p.clues[e.key]=data.clueTexts[i]; });
+      toast("Imported \u201c"+p.title+"\u201d \u2014 "+NUM.entries.length+" clues loaded.");
+    }else{
+      var m=Math.min(NUM.entries.length, data.clueTexts.length);
+      for(var j=0;j<m;j++) p.clues[NUM.entries[j].key]=data.clueTexts[j];
+      toast(cropped
+        ? "That grid was larger than 21\u00d721, so it was cropped \u2014 check the clues line up."
+        : "Clue count didn't quite match the grid \u2014 check the clues near the end.");
+    }
+    var f0=firstOpen(); S.cur={r:f0.r,c:f0.c,dir:"A"};
+    try{ history.replaceState(null,"",location.pathname); }catch(e){}
+    renderAll();
+  };
+  reader.onerror=function(){ toast("Couldn't read that file."); };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ============ storage ============ */
+function serialize(p){
+  return {
+    title:p.title||"Untitled puzzle",
+    author:p.author||"",
+    rows:p.rows, cols:p.cols,
+    blocks:p.blocks.map(function(b){ return b?"#":"."; }).join(""),
+    fill:p.fill.map(function(f){ return f||" "; }).join(""),
+    clues:p.clues,
+    pins:p.pins,
+    updatedAt:new Date().toISOString()
+  };
+}
+function deserialize(id, d){
+  var rows=d.rows|0, cols=d.cols|0, n=rows*cols;
+  var blocks=new Array(n).fill(false), fill=new Array(n).fill("");
+  var bs=String(d.blocks||""), fs=String(d.fill||"");
+  for(var i=0;i<n;i++){
+    blocks[i] = bs[i]==="#";
+    var ch=fs[i];
+    fill[i] = (ch && ch!==" ") ? ch : "";
+  }
+  return {
+    id:id, title:d.title||"Untitled puzzle", author:d.author||"",
+    rows:rows, cols:cols, blocks:blocks, fill:fill,
+    clues:d.clues||{}, pins:(d.pins||[]).map(function(p){
+      return {r:p.r|0,c:p.c|0,w:p.w||1,h:p.h||1,op:p.op==null?1:p.op,rot:p.rot||0,
+              fit:p.fit==="cover"?"cover":"contain", assetId:p.assetId, data:p.data};
+    })
+  };
+}
+function savePuzzle(){
+  if(!S.db){ toast("Saving isn't available here. Use Share to download a playable file instead."); return; }
+  if(S.saving) return;
+  S.saving=true; renderActs();
+  var ref = S.puzzle.id ? S.db.doc("puzzles/"+S.puzzle.id) : S.db.collection("puzzles").doc();
+  ref.set(serialize(S.puzzle)).then(function(){
+    S.puzzle.id=ref.id; S.dirty=false; S.saving=false;
+    try{ history.replaceState(null,"","#e="+ref.id); }catch(e){}
+    renderActs();
+    toast("Saved.");
+  }, function(err){
+    S.saving=false; renderActs();
+    var code=err && err.code;
+    if(code==="permission_denied") toast("You don't have permission to save here. Share a downloaded file instead.");
+    else toast("Couldn't save. Try again in a moment.");
+  });
+}
+function openDialog(){
+  if(!S.db){ toast("Saved puzzles aren't available here."); return; }
+  modal("Open a puzzle", function(body, close){
+    body.appendChild(el("p","hint","Loading\u2026"));
+    S.db.collection("puzzles").orderBy("updatedAt","desc").limit(50).get().then(function(snap){
+      body.textContent="";
+      var docs=[];
+      snap.forEach(function(d){ docs.push({id:d.id, data:d.data()}); });
+      if(!docs.length){ body.appendChild(el("p","hint","Nothing saved yet.")); return; }
+      var ul=el("ul","plist");
+      docs.forEach(function(d){
+        var li=el("li");
+        var t=el("div","t");
+        t.appendChild(el("b",null,d.data.title||"Untitled puzzle"));
+        t.appendChild(el("small",null,(d.data.rows||"?")+"\u00d7"+(d.data.cols||"?")+
+          (d.data.author?" \u00b7 "+d.data.author:"")));
+        li.appendChild(t);
+        li.appendChild(mkBtn("Open", function(){
+          S.puzzle=deserialize(d.id, d.data);
+          S.dirty=false; S.activePin=null;
+          try{ history.replaceState(null,"","#e="+d.id); }catch(e){}
+          close(); setMode("build");
+        }));
+        var del=mkBtn("Delete", function(){
+          confirmModal("Delete this puzzle?", "\u201c"+(d.data.title||"This puzzle")+"\u201d will be permanently deleted.", "Delete", true, function(){
+            S.db.doc("puzzles/"+d.id).delete().then(function(){ li.remove(); toast("Deleted."); },
+              function(){ toast("Couldn't delete that one."); });
+          });
+        });
+        del.className="btn danger";
+        li.appendChild(del);
+        ul.appendChild(li);
+      });
+      body.appendChild(ul);
+    }, function(){
+      body.textContent="";
+      body.appendChild(el("p","hint","Couldn't load your saved puzzles."));
+    });
+  });
+}
+
+function exportGridPng(){
+  var p=S.puzzle, cell=100;
+  var w=p.cols*cell, h=p.rows*cell;
+  var cv=document.createElement("canvas");
+  cv.width=w; cv.height=h;
+  var ctx=cv.getContext("2d");
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle="#000000";
+  for(var r=0;r<p.rows;r++){
+    for(var c=0;c<p.cols;c++){
+      if(p.blocks[r*p.cols+c]) ctx.fillRect(c*cell, r*cell, cell, cell);
+    }
+  }
+  ctx.strokeStyle="#000000";
+  ctx.lineWidth=Math.max(1, cell*0.02);
+  ctx.beginPath();
+  for(var x=0;x<=p.cols;x++){ ctx.moveTo(x*cell+0.5,0); ctx.lineTo(x*cell+0.5,h); }
+  for(var y=0;y<=p.rows;y++){ ctx.moveTo(0,y*cell+0.5); ctx.lineTo(w,y*cell+0.5); }
+  ctx.stroke();
+  cv.toBlob(function(blob){
+    if(!blob){ toast("Couldn't create the PNG."); return; }
+    var name=(p.title||"grid").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"-").toLowerCase() || "grid";
+    if(S.downloads){
+      S.downloads.save({filename:name+"-lines.png", data:blob}).then(function(){ toast("Downloaded."); },
+        function(err){ if(err && err.code==="declined") return; fallbackDownload(blob, name+"-lines.png"); });
+    } else fallbackDownload(blob, name+"-lines.png");
+  }, "image/png");
+}
+
+/* ============ share / export ============ */
+function shareDialog(){
+  modal("Share this puzzle", function(body, close){
+    body.appendChild(el("p","hint","A downloaded file works anywhere \u2014 send it by email or message and it opens in any browser, images and all."));
+    var dl=el("button","btn primary","Download playable file");
+    dl.onclick=function(){ close(); exportPlayable(); };
+    body.appendChild(dl);
+
+    if(S.db){
+      body.appendChild(el("p","hint","Or send a link. Anyone who can open this artifact will get the puzzle in solving mode."));
+      var link=el("button","btn","Copy solving link");
+      link.onclick=function(){
+        if(!S.puzzle.id){ toast("Save the puzzle first, then copy the link."); return; }
+        var url=location.href.split("#")[0]+"#p="+S.puzzle.id;
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(url).then(function(){ toast("Link copied."); },
+            function(){ linkModal(url); });
+        } else linkModal(url);
+      };
+      body.appendChild(link);
+    }
+  });
+}
+
+function exportPlayable(){
+  toast("Building your file\u2026");
+  var p=S.puzzle;
+  var jobs=p.pins.map(function(pin){
+    if(pin.data || !pin.assetId) return Promise.resolve(null);
+    return fetch("/_blob/"+pin.assetId).then(function(r){ return r.blob(); })
+      .then(blobToDataURL).then(function(d){ return {id:pin.assetId, data:d}; })
+      .catch(function(){ return null; });
+  });
+  Promise.all(jobs).then(function(results){
+    var images={};
+    results.forEach(function(r){ if(r) images[r.id]=r.data; });
+    var embed={ puzzle:serialize(p), images:images };
+    var css=document.getElementById("app-css").textContent;
+    var js=document.getElementById("app-js").textContent;
+    var payload=JSON.stringify(embed).replace(/</g,"\\u003c").replace(/\u2028/g,"\\u2028").replace(/\u2029/g,"\\u2029");
+    var html =
+      "<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">" +
+      "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">" +
+      "<title>" + esc(p.title||"Crossword") + "</title>" +
+      FONT_LINKS +
+      "<style id=\"app-css\">" + css + "</style></head><body class=\"embedded\">" +
+      "<div id=\"app\">" + APP_SHELL + "</div><div id=\"overlay\"></div>" +
+      "<script>window.__EMBED__=" + payload + ";<\/script>" +
+      "<script id=\"app-js\">" + js + "<\/script>" +
+      "</body></html>";
+    var name=(p.title||"crossword").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"-").toLowerCase() || "crossword";
+    var blob=new Blob([html], {type:"text/html"});
+    if(S.downloads){
+      S.downloads.save({filename:name+".html", data:blob}).then(function(){ toast("Downloaded."); },
+        function(err){
+          if(err && err.code==="declined") return;
+          fallbackDownload(blob, name+".html");
+        });
+    } else fallbackDownload(blob, name+".html");
+  });
+}
+function fallbackDownload(blob, filename){
+  try{
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  }catch(e){ toast("Downloads aren't available in this view."); }
+}
+
+/* ============ modal + toast ============ */
+function confirmModal(title, message, confirmLabel, danger, onConfirm){
+  var ov=$("overlay");
+  var scrim=el("div","scrim");
+  var box=el("div","modal");
+  box.appendChild(el("h3",null,title));
+  var body=el("div","mbody");
+  body.appendChild(el("p","hint",message));
+  box.appendChild(body);
+  var foot=el("div","mfoot");
+  function close(){ scrim.remove(); }
+  var cancel=mkBtn("Cancel",close); cancel.className="btn quiet";
+  var go=mkBtn(confirmLabel||"Continue", function(){ close(); onConfirm(); });
+  go.className = danger ? "btn danger" : "btn primary";
+  foot.appendChild(cancel); foot.appendChild(go);
+  box.appendChild(foot);
+  scrim.appendChild(box);
+  scrim.onclick=function(e){ if(e.target===scrim) close(); };
+  ov.appendChild(scrim);
+}
+function linkModal(url){
+  modal("Solving link", function(body){
+    body.appendChild(el("p","hint","Anyone who can open this artifact can play the puzzle from this link:"));
+    var row=el("div","row");
+    var inp=el("input"); inp.value=url; inp.readOnly=true;
+    inp.onclick=function(){ inp.select(); };
+    row.appendChild(inp);
+    var cp=mkBtn("Copy", function(){
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(function(){ toast("Link copied."); },
+          function(){ inp.select(); toast("Copy didn't go through \u2014 the link is selected, so Ctrl/Cmd+C will grab it."); });
+      } else { inp.select(); toast("Copy didn't go through \u2014 the link is selected, so Ctrl/Cmd+C will grab it."); }
+    });
+    row.appendChild(cp);
+    body.appendChild(row);
+  });
+}
+function modal(title, build){
+  var ov=$("overlay");
+  var scrim=el("div","scrim");
+  var box=el("div","modal");
+  box.appendChild(el("h3",null,title));
+  var body=el("div","mbody");
+  box.appendChild(body);
+  var foot=el("div","mfoot");
+  var close=function(){ scrim.remove(); };
+  var cb=mkBtn("Close", close); cb.className="btn quiet";
+  foot.appendChild(cb);
+  box.appendChild(foot);
+  scrim.appendChild(box);
+  scrim.onclick=function(e){ if(e.target===scrim) close(); };
+  ov.appendChild(scrim);
+  build(body, close);
+}
+var toastTimer=null;
+function toast(msg){
+  var old=document.querySelector(".toast");
+  if(old) old.remove();
+  var t=el("div","toast",msg);
+  document.body.appendChild(t);
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){ t.remove(); }, 2800);
+}
+
+/* ============ boot ============ */
+function wire(){
+  $("gridwrap").addEventListener("pointerdown", function(ev){
+    if(onPinDown(ev)) return;
+    onCellPointer(ev);
+  });
+  $("gridwrap").addEventListener("dragover", function(ev){
+    if(S.mode==="build") ev.preventDefault();
+  });
+  $("gridwrap").addEventListener("drop", function(ev){
+    if(S.mode!=="build") return;
+    var f=ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+    if(!f) return;
+    ev.preventDefault();
+    if(/\.puz$/i.test(f.name)) importPuz(f);
+    else if(f.type.indexOf("image/")===0){ S.tool="images"; renderAll(); addImage(f); }
+  });
+  window.addEventListener("pointermove", onPinMove);
+  window.addEventListener("pointerup", onPinUp);
+  window.addEventListener("pointercancel", onPinUp);
+
+  var kbd=$("kbd");
+  kbd.addEventListener("keydown", onKey);
+  kbd.addEventListener("input", onInput);
+  document.addEventListener("keydown", function(ev){
+    if(document.activeElement===kbd) return;
+    var tag=document.activeElement && document.activeElement.tagName;
+    if(tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT") return;
+    onKey(ev);
+  });
+
+  document.querySelectorAll("#modes button").forEach(function(b){
+    b.onclick=function(){ setMode(b.dataset.mode); };
+  });
+
+  var rt;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt);
+    rt=setTimeout(function(){ sizeGrid(); }, 80);
+  });
+
+  window.addEventListener("beforeunload", function(ev){
+    if(S.dirty && !EMBED){ ev.preventDefault(); ev.returnValue=""; }
+  });
+
+  setInterval(function(){
+    if(S.mode!=="play" || !S.play || S.play.done) return;
+    S.play.elapsed += 1000;
+    var t=$("timer");
+    if(t) t.textContent=fmtTime(S.play.elapsed);
+    if(S.play.elapsed % 10000 === 0) saveProgress();
+  }, 1000);
+}
+
+function hookCaps(){
+  if(!window.claude || typeof window.claude.use !== "function") return;
+  window.claude.use("db").then(function(db){
+    S.db=db;
+    renderActs();
+    var h=location.hash||"";
+    var m=h.match(/^#([pe])=(.+)$/);
+    if(db && m){
+      db.doc("puzzles/"+m[2]).get().then(function(snap){
+        if(!snap.exists) { toast("That puzzle wasn't found."); return; }
+        S.puzzle=deserialize(m[2], snap.data());
+        S.dirty=false;
+        setMode(m[1]==="p" ? "play" : "build");
+      }, function(){ toast("Couldn't load that puzzle."); });
+    }
+  }, function(){});
+  window.claude.use("assets").then(function(a){ S.assets=a; }, function(){});
+  window.claude.use("downloads").then(function(d){ S.downloads=d; }, function(){});
+}
+
+function boot(){
+  if(EMBED){
+    document.body.classList.add("embedded");
+    S.puzzle=deserialize(null, EMBED.puzzle);
+    wire();
+    setMode("play");
+    return;
+  }
+  // a small starter grid so the first screen isn't empty
+  S.puzzle=blankPuzzle(11,11);
+  [12,16,22,32,38,48,54,64,72,82,88,98,104,108].forEach(function(i){
+    if(i<S.puzzle.blocks.length){ S.puzzle.blocks[i]=true; S.puzzle.blocks[mirror(i)]=true; }
+  });
+  wire();
+  renderAll();
+  hookCaps();
+}
+boot();
+})();
+</script></body></html>
